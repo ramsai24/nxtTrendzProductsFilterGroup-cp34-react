@@ -70,6 +70,9 @@ class AllProductsSection extends Component {
     productsList: [],
     isLoading: false,
     activeOptionId: sortbyOptions[0].optionId,
+    categoryID: categoryOptions[0].categoryId,
+    searchInput: '',
+    ratingID: ratingsList[0].ratingId,
   }
 
   componentDidMount() {
@@ -84,8 +87,8 @@ class AllProductsSection extends Component {
 
     // TODO: Update the code to get products with filters applied
 
-    const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}`
+    const {activeOptionId, categoryID, searchInput, ratingID} = this.state
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${categoryID}&title_search=${searchInput}&rating=${ratingID}`
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -142,13 +145,23 @@ class AllProductsSection extends Component {
 
   // TODO: Add failure view
 
+  onFilter = id => {
+    console.log(id)
+
+    this.setState({categoryID: id}, this.getProducts)
+  }
+
   render() {
-    const {isLoading} = this.state
+    const {isLoading, productsList} = this.state
 
     return (
       <div className="all-products-section">
         {/* TODO: Update the below element */}
-        <FiltersGroup />
+        <FiltersGroup
+          ratingsList={ratingsList}
+          categoryList={categoryOptions}
+          onFilter={this.onFilter}
+        />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
       </div>
